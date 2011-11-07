@@ -1,18 +1,19 @@
-GIT
-  remote: git@github.com:alphagov/plek.git
-  revision: fc4661bfdd15270838ef0b3e72398045749dfa88
+PATH
+  remote: .
   specs:
-    plek (0.1.4)
-      builder
+    rummageable (0.1.0)
+      json
+      plek
+      rest-client
 
 GEM
   remote: http://rubygems.org/
   specs:
     addressable (2.2.6)
-    builder (3.0.0)
     crack (0.3.1)
     json (1.6.1)
     mime-types (1.17.2)
+    plek (0.1.2)
     rake (0.9.2.2)
     rest-client (1.6.7)
       mime-types (>= 1.16)
@@ -24,8 +25,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  json
-  plek!
   rake
-  rest-client
+  rummageable!
   webmock
