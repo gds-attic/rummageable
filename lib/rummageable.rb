@@ -19,6 +19,11 @@ module Rummageable
     RestClient.post url, body, content_type: :json, accept: :json
   end
 
+  def delete(link)
+    url = Plek.current.find("search") + "/documents/" + CGI.escape(link)
+    RestClient.delete url, content_type: :json, accept: :json
+  end
+
   VALID_KEYS = [
     %w[title],
     %w[description],

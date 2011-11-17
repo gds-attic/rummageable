@@ -65,4 +65,13 @@ class RummageableTest < MiniTest::Unit::TestCase
     end
   end
 
+  def test_should_delete_a_document_by_its_link
+    link = "http://example.com/foo"
+
+    stub_request(:delete, "http://search.test.gov.uk/documents/http%3A%2F%2Fexample.com%2Ffoo").
+      to_return(status: 200, body: '{"status":"OK"}')
+
+    Rummageable.delete(link)
+  end
+
 end
