@@ -5,6 +5,7 @@ require "plek"
 module Rummageable
 
   InvalidDocument = Class.new(RuntimeError)
+  CHUNK_SIZE = 20
 
   # documents must be either a hash (for one document) or an array of hashes
   # (for multiple documents)
@@ -15,8 +16,10 @@ module Rummageable
       validate_structure document
     end
     url = Plek.current.find("search") + "/documents"
-    body = JSON.dump(documents)
-    RestClient.post url, body, content_type: :json, accept: :json
+    0.step(documents.length - 1, CHUNK_SIZE).each do |i|
+      body = JSON.dump(documents[i, CHUNK_SIZE])
+      RestClient.post url, body, content_type: :json, accept: :json
+    end
   end
 
   def delete(link)
