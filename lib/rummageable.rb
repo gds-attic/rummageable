@@ -31,6 +31,7 @@ module Rummageable
     %w[title],
     %w[description],
     %w[format],
+    %w[section],
     %w[link],
     %w[indexable_content],
     %w[additional_links title],
