@@ -7,9 +7,13 @@ module Rummageable
   InvalidDocument = Class.new(RuntimeError)
   CHUNK_SIZE = 20
 
-  attr_writer :host
-  def host
-    @host || Plek.current.find("search")
+  attr_writer :rummager_service_name
+  def rummager_service_name
+    @rummager_service_name || "search"
+  end
+
+  def rummager_host
+    Plek.current.find(rummager_service_name)
   end
 
   attr_writer :path_prefix
@@ -25,7 +29,7 @@ module Rummageable
     documents.each do |document|
       validate_structure document
     end
-    url = host + path_prefix + "/documents"
+    url = rummager_host + path_prefix + "/documents"
     0.step(documents.length - 1, CHUNK_SIZE).each do |i|
       body = JSON.dump(documents[i, CHUNK_SIZE])
       RestClient.post url, body, content_type: :json, accept: :json
@@ -33,7 +37,7 @@ module Rummageable
   end
 
   def delete(link)
-    url = host + path_prefix + "/documents/" + CGI.escape(link)
+    url = rummager_host + path_prefix + "/documents/" + CGI.escape(link)
     RestClient.delete url, content_type: :json, accept: :json
   end
 
