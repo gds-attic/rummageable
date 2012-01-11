@@ -12,8 +12,9 @@ module Rummageable
     @rummager_service_name || "search"
   end
 
+  attr_writer :rummager_host
   def rummager_host
-    Plek.current.find(rummager_service_name)
+    @rummager_host || Plek.current.find(rummager_service_name)
   end
 
   attr_writer :path_prefix
