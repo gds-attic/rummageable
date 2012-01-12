@@ -51,6 +51,7 @@ module Rummageable
     %w[indexable_content],
     %w[additional_links title],
     %w[additional_links link],
+    %w[additional_links link_order],
   ]
 
   def validate_structure(hash, parents=[])

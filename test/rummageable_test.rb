@@ -4,7 +4,7 @@ require "rummageable"
 ENV["RACK_ENV"] = "test"
 
 class RummageableTest < MiniTest::Unit::TestCase
-  API = "http://search.test.gov.uk"
+  API = Plek.current.find("search")
 
   def test_should_index_a_single_document_by_posting_it_as_json
     document = {
