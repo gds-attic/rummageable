@@ -1,6 +1,11 @@
+lib = File.expand_path('../lib/', __FILE__)
+$:.unshift lib unless $:.include?(lib)
+
+require 'rummageable/version'
+
 Gem::Specification.new do |s|
   s.name = "rummageable"
-  s.version = "0.1.2"
+  s.version = Rummageable::VERSION
   s.authors = ["GovUK Beta Team"]
   s.description = "Mediator for apps that want their content to be in the search index"
   s.files = Dir["lib/**/*.rb"]
