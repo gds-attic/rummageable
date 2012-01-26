@@ -41,6 +41,10 @@ module Rummageable
     implementation.delete(link)
   end
 
+  def commit
+    implementation.commit
+  end
+
   VALID_KEYS = [
     %w[title],
     %w[description],

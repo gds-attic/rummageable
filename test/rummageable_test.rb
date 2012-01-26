@@ -121,6 +121,13 @@ class RummageableTest < MiniTest::Unit::TestCase
       Rummageable.rummager_host = nil
   end
 
+  def test_should_commit_to_rummmageable_host
+    stub_request(:post, "#{API}/commit").
+      to_return(status: 200, body: '{"result":"OK"}')
+
+    Rummageable.commit
+  end
+
   private
 
   def with_rummager_service_name(service_name)

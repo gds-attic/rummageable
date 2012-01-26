@@ -17,6 +17,11 @@ module Rummageable
       RestClient.delete url, content_type: :json, accept: :json
     end
 
+    def commit
+      url = Rummageable.rummager_host + Rummageable.path_prefix + "/commit"
+      RestClient.post url, {}
+    end
+
     def validate_structure(hash, parents=[])
       hash.each do |key, value|
         full_key = parents + [key]

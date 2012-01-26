@@ -6,6 +6,9 @@ module Rummageable
     def delete(link)
     end
 
+    def commit
+    end
+
     def validate_structure(hash, parents=[])
     end
   end
