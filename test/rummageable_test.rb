@@ -15,6 +15,7 @@ class RummageableTest < MiniTest::Unit::TestCase
       "subsection" => "NAME OF SUBSECTION",
       "link" => "/link",
       "indexable_content" => "TEXT",
+      "boost_phrases" => "BOOST",
       "additional_links" => [
         {"title" => "LINK1", "link" => "/link1"},
         {"title" => "LINK2", "link" => "/link2"},
