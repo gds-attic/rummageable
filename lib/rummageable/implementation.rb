@@ -13,7 +13,10 @@ module Rummageable
     end
 
     def delete(link)
-      url = Rummageable.rummager_host + Rummageable.path_prefix + "/documents/" + CGI.escape(link)
+      url = [
+        Rummageable.rummager_host, Rummageable.path_prefix,
+        "/documents?link=", CGI.escape(link)
+      ].join("")
       RestClient.delete url, content_type: :json, accept: :json
     end
 
