@@ -100,6 +100,36 @@ class RummageableTest < MiniTest::Unit::TestCase
     Rummageable.delete(link)
   end
 
+  def test_should_post_amendments
+    stub_request(:post, "#{API}/documents/%2Ffoobang").
+      with(body: {"title" => "Cheese", "indexable_content" => "Blah"}).
+      to_return(status: 200, body: '{"status":"OK"}')
+
+    Rummageable.amend("/foobang", {"title" => "Cheese", "indexable_content" => "Blah"})
+  end
+
+  def test_should_reject_unknown_amendments
+    stub_request(:post, "#{API}/documents/%2Ffoobang").
+      to_return(status: 200, body: '{"status":"OK"}')
+
+    assert_raises Rummageable::InvalidDocument do
+      Rummageable.amend("/foobang", {"title" => "Cheese", "face" => "Blah"})
+    end
+
+    assert_not_requested :any, "#{API}/documents/%2Ffoobang"
+  end
+
+  def test_should_fail_amendments_with_symbols
+    stub_request(:post, "#{API}/documents/%2Ffoobang").
+      to_return(status: 200, body: '{"status":"OK"}')
+
+    assert_raises Rummageable::InvalidDocument do
+      Rummageable.amend("/foobang", {title: "Cheese"})
+    end
+
+    assert_not_requested :any, "#{API}/documents/%2Ffoobang"
+  end
+
   def test_should_delete_to_rummageable_host_determined_by_rummager_service_name
     link = "http://example.com/foo"
     stub_request(:delete, "#{API}/documents/http:%2F%2Fexample.com%2Ffoo")

@@ -12,6 +12,11 @@ module Rummageable
       end
     end
 
+    def amend(link, amendments)
+      validate_structure amendments
+      RestClient.post url_for(link), amendments
+    end
+
     def delete(link)
       RestClient.delete url_for(link), content_type: :json, accept: :json
     end
