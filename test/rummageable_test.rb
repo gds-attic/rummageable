@@ -94,7 +94,7 @@ class RummageableTest < MiniTest::Unit::TestCase
   def test_should_delete_a_document_by_its_link
     link = "http://example.com/foo"
 
-    stub_request(:delete, "#{API}/documents?link=http%3A%2F%2Fexample.com%2Ffoo").
+    stub_request(:delete, "#{API}/documents/http:%2F%2Fexample.com%2Ffoo").
       to_return(status: 200, body: '{"status":"OK"}')
 
     Rummageable.delete(link)
@@ -102,13 +102,13 @@ class RummageableTest < MiniTest::Unit::TestCase
 
   def test_should_delete_to_rummageable_host_determined_by_rummager_service_name
     link = "http://example.com/foo"
-    stub_request(:delete, "#{API}/documents?link=http%3A%2F%2Fexample.com%2Ffoo")
-    stub_request(:delete, "http://whitehall-search.test.alphagov.co.uk/documents?link=http%3A%2F%2Fexample.com%2Ffoo")
+    stub_request(:delete, "#{API}/documents/http:%2F%2Fexample.com%2Ffoo")
+    stub_request(:delete, "http://whitehall-search.test.alphagov.co.uk/documents/http:%2F%2Fexample.com%2Ffoo")
     with_rummager_service_name("whitehall-search") do
       Rummageable.delete(link)
     end
-    assert_not_requested(:delete, "#{API}/#{API}/documents?link=http%3A%2F%2Fexample.com%2Ffoo")
-    assert_requested(:delete, "http://whitehall-search.test.alphagov.co.uk/documents?link=http%3A%2F%2Fexample.com%2Ffoo")
+    assert_not_requested(:delete, "#{API}/#{API}/documents/http:%2F%2Fexample.com%2Ffoo")
+    assert_requested(:delete, "http://whitehall-search.test.alphagov.co.uk/documents/http:%2F%2Fexample.com%2Ffoo")
   end
 
   def test_should_defer_to_plek_for_the_location_of_the_rummager_host
