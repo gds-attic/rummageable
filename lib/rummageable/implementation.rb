@@ -12,12 +12,13 @@ module Rummageable
       end
     end
 
+    def amend(link, amendments)
+      validate_structure amendments
+      RestClient.post url_for(link), amendments
+    end
+
     def delete(link)
-      url = [
-        Rummageable.rummager_host, Rummageable.path_prefix,
-        "/documents?link=", CGI.escape(link)
-      ].join("")
-      RestClient.delete url, content_type: :json, accept: :json
+      RestClient.delete url_for(link), content_type: :json, accept: :json
     end
 
     def commit
@@ -39,6 +40,14 @@ module Rummageable
           raise InvalidDocument unless VALID_KEYS.include?(full_key)
         end
       end
+    end
+
+  private
+    def url_for(link)
+      [
+        Rummageable.rummager_host, Rummageable.path_prefix,
+        "/documents/", CGI.escape(link)
+      ].join("")
     end
   end
 end
