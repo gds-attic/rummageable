@@ -18,4 +18,5 @@ Gem::Specification.new do |s|
   s.add_dependency "plek"
   s.add_development_dependency "rake"
   s.add_development_dependency "webmock"
+  s.add_development_dependency "gem_publisher", "1.0.0"
 end
