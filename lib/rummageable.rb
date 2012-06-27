@@ -41,6 +41,10 @@ module Rummageable
     implementation.delete(link)
   end
 
+  def amend(link, amendments)
+    implementation.amend(link, amendments)
+  end
+
   def commit
     implementation.commit
   end
