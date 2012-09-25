@@ -80,6 +80,30 @@ class RummageableTest < MiniTest::Unit::TestCase
     end
   end
 
+  def test_allows_indexing_to_an_alternative_index
+    document = {
+      "title" => "TITLE",
+      "description" => "DESCRIPTION",
+      "format" => "NAME OF FORMAT",
+      "section" => "NAME OF SECTION",
+      "subsection" => "NAME OF SUBSECTION",
+      "link" => "/link",
+      "indexable_content" => "TEXT",
+      "boost_phrases" => "BOOST",
+      "additional_links" => [
+        {"title" => "LINK1", "link" => "/link1"},
+        {"title" => "LINK2", "link" => "/link2"},
+      ]
+    }
+    json = JSON.dump([document])
+
+    stub_request(:post, "#{API}/alternative/documents").
+      with(body: json).
+      to_return(status: 200, body: '{"status":"OK"}')
+
+    Rummageable.index(document, "/alternative")
+  end
+
   def test_should_post_to_rummageable_host_determined_by_rummager_service_name
     document = {"title" => "TITLE"}
     stub_request(:post, "#{API}/documents")
@@ -98,6 +122,15 @@ class RummageableTest < MiniTest::Unit::TestCase
       to_return(status: 200, body: '{"status":"OK"}')
 
     Rummageable.delete(link)
+  end
+
+  def test_should_allow_deletion_from_an_alternative_index
+    link = "http://example.com/foo"
+
+    stub_request(:delete, "#{API}/alternative/documents/http:%2F%2Fexample.com%2Ffoo").
+      to_return(status: 200, body: '{"status":"OK"}')
+
+    Rummageable.delete(link, '/alternative')
   end
 
   def test_should_post_amendments
@@ -157,6 +190,13 @@ class RummageableTest < MiniTest::Unit::TestCase
       to_return(status: 200, body: '{"result":"OK"}')
 
     Rummageable.commit
+  end
+
+  def test_should_allow_committing_an_alternative_index
+    stub_request(:post, "#{API}/alternative/commit").
+      to_return(status: 200, body: '{"result":"OK"}')
+
+    Rummageable.commit '/alternative'
   end
 
   private

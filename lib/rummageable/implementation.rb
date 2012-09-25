@@ -1,28 +1,28 @@
 module Rummageable
   class Implementation
-    def index(documents)
+    def index(documents, index_name)
       documents = [documents].flatten
       documents.each do |document|
         validate_structure document
       end
-      url = Rummageable.rummager_host + Rummageable.path_prefix + "/documents"
+      url = Rummageable.rummager_host + index_name + "/documents"
       0.step(documents.length - 1, CHUNK_SIZE).each do |i|
         body = JSON.dump(documents[i, CHUNK_SIZE])
         RestClient.post url, body, content_type: :json, accept: :json
       end
     end
 
-    def amend(link, amendments)
+    def amend(link, amendments, index_name)
       validate_structure amendments
-      RestClient.post url_for(link), amendments
+      RestClient.post url_for(link, index_name), amendments
     end
 
-    def delete(link)
-      RestClient.delete url_for(link), content_type: :json, accept: :json
+    def delete(link, index_name)
+      RestClient.delete url_for(link, index_name), content_type: :json, accept: :json
     end
 
-    def commit
-      url = Rummageable.rummager_host + Rummageable.path_prefix + "/commit"
+    def commit(index_name)
+      url = Rummageable.rummager_host + index_name + "/commit"
       RestClient.post url, {}
     end
 
@@ -43,9 +43,9 @@ module Rummageable
     end
 
   private
-    def url_for(link)
+    def url_for(link, index_name)
       [
-        Rummageable.rummager_host, Rummageable.path_prefix,
+        Rummageable.rummager_host, index_name,
         "/documents/", CGI.escape(link)
       ].join("")
     end
