@@ -20,9 +20,9 @@ module Rummageable
     @rummager_host || Plek.current.find(rummager_service_name)
   end
 
-  attr_writer :path_prefix
-  def path_prefix
-    @path_prefix || ""
+  attr_writer :default_index
+  def default_index
+    @default_index || ""
   end
 
   attr_writer :implementation
@@ -33,20 +33,20 @@ module Rummageable
   # documents must be either a hash (for one document) or an array of hashes
   # (for multiple documents)
   #
-  def index(documents)
-    implementation.index(documents)
+  def index(documents, index_name = default_index)
+    implementation.index(documents, index_name)
   end
 
-  def delete(link)
-    implementation.delete(link)
+  def delete(link, index_name = default_index)
+    implementation.delete(link, index_name)
   end
 
-  def amend(link, amendments)
-    implementation.amend(link, amendments)
+  def amend(link, amendments, index_name = default_index)
+    implementation.amend(link, amendments, index_name)
   end
 
-  def commit
-    implementation.commit
+  def commit(index_name = default_index)
+    implementation.commit(index_name)
   end
 
   VALID_KEYS = [
