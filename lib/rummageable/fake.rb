@@ -6,6 +6,9 @@ module Rummageable
     def delete(link, index_name)
     end
 
+    def amend(link, amendments, index_name)
+    end
+
     def commit(index_name)
     end
 
