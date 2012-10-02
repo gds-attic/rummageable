@@ -55,6 +55,7 @@ module Rummageable
     %w[format],
     %w[section],
     %w[subsection],
+    %w[subsubsection],
     %w[link],
     %w[indexable_content],
     %w[boost_phrases],
