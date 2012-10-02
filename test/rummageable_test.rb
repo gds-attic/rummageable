@@ -13,6 +13,7 @@ class RummageableTest < MiniTest::Unit::TestCase
       "format" => "NAME OF FORMAT",
       "section" => "NAME OF SECTION",
       "subsection" => "NAME OF SUBSECTION",
+      "subsubsection" => "NAME OF SUBSUBSECTION",
       "link" => "/link",
       "indexable_content" => "TEXT",
       "boost_phrases" => "BOOST",
