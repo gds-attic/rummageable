@@ -41,6 +41,10 @@ module Rummageable
     implementation.delete(link, index_name)
   end
 
+  def delete_all(index_name = default_index)
+    implementation.delete_all(index_name)
+  end
+
   def amend(link, amendments, index_name = default_index)
     implementation.amend(link, amendments, index_name)
   end

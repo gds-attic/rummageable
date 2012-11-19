@@ -134,6 +134,20 @@ class RummageableTest < MiniTest::Unit::TestCase
     Rummageable.delete(link, '/alternative')
   end
 
+  def test_should_allow_delete_all
+    stub_request(:delete, "#{API}/documents/*").
+      to_return(status: 200, body: '{"status":"OK"}')
+
+    Rummageable.delete_all
+  end
+
+  def test_should_allow_delete_all_from_an_alternative_index
+    stub_request(:delete, "#{API}/alternative/documents/*").
+      to_return(status: 200, body: '{"status":"OK"}')
+
+    Rummageable.delete_all('/alternative')
+  end
+
   def test_should_post_amendments
     stub_request(:post, "#{API}/documents/%2Ffoobang").
       with(body: {"title" => "Cheese", "indexable_content" => "Blah"}).
