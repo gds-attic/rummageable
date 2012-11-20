@@ -21,6 +21,10 @@ module Rummageable
       RestClient.delete url_for(link, index_name), content_type: :json, accept: :json
     end
 
+    def delete_all(index_name)
+      RestClient.delete unescaped_url_for("*", index_name), content_type: :json, accept: :json
+    end
+
     def commit(index_name)
       url = Rummageable.rummager_host + index_name + "/commit"
       RestClient.post url, {}
@@ -43,11 +47,17 @@ module Rummageable
     end
 
   private
+
+    def url_components(index_name)
+      [Rummageable.rummager_host, index_name, "/documents/"]
+    end
+
     def url_for(link, index_name)
-      [
-        Rummageable.rummager_host, index_name,
-        "/documents/", CGI.escape(link)
-      ].join("")
+      (url_components(index_name) << CGI.escape(link)).join
+    end
+
+    def unescaped_url_for(link, index_name)
+      (url_components(index_name) << link).join
     end
   end
 end
