@@ -135,14 +135,14 @@ class RummageableTest < MiniTest::Unit::TestCase
   end
 
   def test_should_allow_delete_all
-    stub_request(:delete, "#{API}/documents/*").
+    stub_request(:delete, "#{API}/documents?delete_all=1").
       to_return(status: 200, body: '{"status":"OK"}')
 
     Rummageable.delete_all
   end
 
   def test_should_allow_delete_all_from_an_alternative_index
-    stub_request(:delete, "#{API}/alternative/documents/*").
+    stub_request(:delete, "#{API}/alternative/documents?delete_all=1").
       to_return(status: 200, body: '{"status":"OK"}')
 
     Rummageable.delete_all('/alternative')

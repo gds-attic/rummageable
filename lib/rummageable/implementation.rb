@@ -22,7 +22,8 @@ module Rummageable
     end
 
     def delete_all(index_name)
-      RestClient.delete unescaped_url_for("*", index_name), content_type: :json, accept: :json
+      url = Rummageable.rummager_host + index_name + "/documents?delete_all=1"
+      RestClient.delete url, content_type: :json, accept: :json
     end
 
     def commit(index_name)
