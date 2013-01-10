@@ -2,11 +2,11 @@ module Rummageable
   class Implementation
     def index(documents, index_name)
       documents = documents.is_a?(Hash) ? [documents] : documents
-      documents.each do |document|
-        validate_structure document
-      end
       url = Rummageable.rummager_host + index_name + "/documents"
       documents.each_slice(CHUNK_SIZE).each do |slice|
+        slice.each do |document|
+          validate_structure document
+        end
         body = JSON.dump(slice)
         RestClient.post url, body, content_type: :json, accept: :json
       end
