@@ -22,7 +22,7 @@ class RummageableTest < MiniTest::Unit::TestCase
         {"title" => "LINK2", "link" => "/link2"},
       ]
     }
-    json = JSON.dump([document])
+    json = MultiJson.encode([document])
 
     stub_request(:post, "#{API}/documents").
       with(body: json).
@@ -36,7 +36,7 @@ class RummageableTest < MiniTest::Unit::TestCase
       {"title" => "DOC1"},
       {"title" => "DOC2"}
     ]
-    json = JSON.dump(documents)
+    json = MultiJson.encode(documents)
 
     stub_request(:post, "#{API}/documents").
       with(body: json).
@@ -52,8 +52,8 @@ class RummageableTest < MiniTest::Unit::TestCase
       to_return(status: 200, body: '{"status":"OK"}')
 
     Rummageable.index(documents)
-    assert_requested :post, "#{API}/documents", body: JSON.dump(documents[0, 20])
-    assert_requested :post, "#{API}/documents", body: JSON.dump(documents[20, 1])
+    assert_requested :post, "#{API}/documents", body: MultiJson.encode(documents[0, 20])
+    assert_requested :post, "#{API}/documents", body: MultiJson.encode(documents[20, 1])
   end
 
   def test_should_raise_an_exception_if_a_document_has_symbol_keys
@@ -96,7 +96,7 @@ class RummageableTest < MiniTest::Unit::TestCase
         {"title" => "LINK2", "link" => "/link2"},
       ]
     }
-    json = JSON.dump([document])
+    json = MultiJson.encode([document])
 
     stub_request(:post, "#{API}/alternative/documents").
       with(body: json).
