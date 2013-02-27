@@ -1,5 +1,4 @@
 require "rest_client"
-require 'yajl'
 require 'multi_json'
 require "plek"
 
