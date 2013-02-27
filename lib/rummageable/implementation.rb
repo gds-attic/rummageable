@@ -7,7 +7,7 @@ module Rummageable
         slice.each do |document|
           validate_structure document
         end
-        body = JSON.dump(slice)
+        body = MultiJson.encode(slice)
         RestClient.post url, body, content_type: :json, accept: :json
       end
     end
