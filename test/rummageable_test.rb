@@ -16,11 +16,7 @@ class RummageableTest < MiniTest::Unit::TestCase
       "subsubsection" => "NAME OF SUBSUBSECTION",
       "link" => "/link",
       "indexable_content" => "TEXT",
-      "boost_phrases" => "BOOST",
-      "additional_links" => [
-        {"title" => "LINK1", "link" => "/link1"},
-        {"title" => "LINK2", "link" => "/link2"},
-      ]
+      "boost_phrases" => "BOOST"
     }
     json = MultiJson.encode([document])
 
@@ -70,17 +66,6 @@ class RummageableTest < MiniTest::Unit::TestCase
     end
   end
 
-  def test_should_raise_an_exception_if_a_document_has_unrecognised_nested_keys
-    document = {
-      "additional_links" => [
-        {"foo" => "bar"}
-      ]
-    }
-    assert_raises Rummageable::InvalidDocument do
-      Rummageable.index(document)
-    end
-  end
-
   def test_allows_indexing_to_an_alternative_index
     document = {
       "title" => "TITLE",
@@ -90,11 +75,7 @@ class RummageableTest < MiniTest::Unit::TestCase
       "subsection" => "NAME OF SUBSECTION",
       "link" => "/link",
       "indexable_content" => "TEXT",
-      "boost_phrases" => "BOOST",
-      "additional_links" => [
-        {"title" => "LINK1", "link" => "/link1"},
-        {"title" => "LINK2", "link" => "/link2"},
-      ]
+      "boost_phrases" => "BOOST"
     }
     json = MultiJson.encode([document])
 
