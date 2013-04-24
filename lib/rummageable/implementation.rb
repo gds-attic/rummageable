@@ -1,5 +1,11 @@
 module Rummageable
   class Implementation
+    # Byte-to-byte read timeout.
+    TIMEOUT      = 5.0
+
+    # TCP connect() timeout.
+    OPEN_TIMEOUT = 1.0
+
     def index(documents, index_name)
       documents = documents.is_a?(Hash) ? [documents] : documents
       url = Rummageable.rummager_host + index_name + "/documents"
@@ -8,27 +14,27 @@ module Rummageable
           validate_structure document
         end
         body = MultiJson.encode(slice)
-        RestClient.post url, body, content_type: :json, accept: :json
+        request(:post, url, body, json_headers())
       end
     end
 
     def amend(link, amendments, index_name)
       validate_structure amendments
-      RestClient.post url_for(link, index_name), amendments
+      request(:post, url_for(link, index_name), amendments)
     end
 
     def delete(link, index_name)
-      RestClient.delete url_for(link, index_name), content_type: :json, accept: :json
+      request(:delete, url_for(link, index_name), json_headers())
     end
 
     def delete_all(index_name)
       url = Rummageable.rummager_host + index_name + "/documents?delete_all=1"
-      RestClient.delete url, content_type: :json, accept: :json
+      request(:delete, url, json_headers())
     end
 
     def commit(index_name)
       url = Rummageable.rummager_host + index_name + "/commit"
-      RestClient.post url, {}
+      request(:post, url, {})
     end
 
     def validate_structure(hash, parents=[])
@@ -47,7 +53,24 @@ module Rummageable
       end
     end
 
-  private
+    private
+
+    def request(method, url, payload = nil, headers = nil)
+      args = {
+        method:       method,
+        url:          url,
+        timeout:      TIMEOUT,
+        open_timeout: OPEN_TIMEOUT,
+      }
+      args[:payload] = payload if payload
+      args[:headers] = headers if headers
+
+      RestClient::Request.execute(args)
+    end
+
+    def json_headers
+      { accept: :json, content_type: :json, }
+    end
 
     def url_components(index_name)
       [Rummageable.rummager_host, index_name, "/documents/"]
