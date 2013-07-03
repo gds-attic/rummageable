@@ -1,9 +1,9 @@
-require "rest_client"
+require 'rest_client'
 require 'multi_json'
-require "plek"
+require 'plek'
 
-require "rummageable/implementation"
-require "rummageable/fake"
+require 'rummageable/implementation'
+require 'rummageable/fake'
 
 module Rummageable
 

@@ -37,9 +37,7 @@ class DeleteTest < MiniTest::Unit::TestCase
     link = "http://example.com/foo"
     stub_request(:delete, "#{API}/documents/http:%2F%2Fexample.com%2Ffoo")
     stub_request(:delete, "#{Plek.current.find("whitehall-search")}/documents/http:%2F%2Fexample.com%2Ffoo")
-    with_rummager_service_name("whitehall-search") do
-      Rummageable.delete(link)
-    end
+    with_whitehall_rummager_service { Rummageable.delete(link) }
     assert_not_requested(:delete, "#{API}/#{API}/documents/http:%2F%2Fexample.com%2Ffoo")
     assert_requested(:delete, "#{Plek.current.find("whitehall-search")}/documents/http:%2F%2Fexample.com%2Ffoo")
   end

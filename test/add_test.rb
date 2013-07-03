@@ -70,16 +70,13 @@ class AddTest < MiniTest::Unit::TestCase
     stub_request(:post, "#{API}/alternative/documents").
       with(body: json_for(one_document)).
       to_return(status: 200, body: '{"result":"OK"}')
-
     Rummageable.index(one_document, "/alternative")
   end
 
   def test_should_post_to_rummageable_host_determined_by_rummager_service_name
     stub_request(:post, "#{API}/documents")
     stub_request(:post, "#{Plek.current.find("whitehall-search")}/documents")
-    with_rummager_service_name("whitehall-search") do
-      Rummageable.index(one_document)
-    end
+    with_whitehall_rummager_service { Rummageable.index(one_document) }
     assert_not_requested(:post, "#{API}/documents")
     assert_requested(:post, "#{Plek.current.find("whitehall-search")}/documents")
   end
