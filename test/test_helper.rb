@@ -24,6 +24,10 @@ class MiniTest::Unit::TestCase
     parts.join('/')
   end
 
+  def link_url
+    documents_url(link: link)
+  end
+
   def status(http_code)
     {
       200 => { status: 200, body: '{"result":"OK"}' },

@@ -5,10 +5,6 @@ class DeleteTest < MiniTest::Unit::TestCase
     'http://example.com/foo'
   end
 
-  def link_url
-    documents_url(link: link)
-  end
-
   def stub_successful_delete_request
     stub_request(:delete, link_url).to_return(status(200))
   end

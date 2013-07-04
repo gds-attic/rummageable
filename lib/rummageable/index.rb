@@ -21,6 +21,12 @@ class Rummageable::Index
     end
   end
 
+  def amend(link, changes)
+    repeatedly do
+      make_request(:post, documents_url(link: link), changes)
+    end
+  end
+
   def delete(link)
     repeatedly do
       make_request(:delete, documents_url(link: link))

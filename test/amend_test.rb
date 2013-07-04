@@ -1,33 +1,15 @@
 require 'test_helper'
 
 class AmendTest < MiniTest::Unit::TestCase
-  def test_should_post_amendments
-    stub_request(:post, "#{rummager_url}/documents/%2Ffoobang").
-      with(body: {"title" => "Cheese", "indexable_content" => "Blah"}).
-      to_return(status: 200, body: '{"result":"OK"}')
-
-    Rummageable.amend("/foobang", {"title" => "Cheese", "indexable_content" => "Blah"})
+  def link
+    '/path'
   end
 
-  def test_should_reject_unknown_amendments
-    stub_request(:post, "#{rummager_url}/documents/%2Ffoobang").
-      to_return(status: 200, body: '{"result":"OK"}')
-
-    assert_raises Rummageable::InvalidDocument do
-      Rummageable.amend("/foobang", {"title" => "Cheese", "face" => "Blah"})
-    end
-
-    assert_not_requested :any, "#{rummager_url}/documents/%2Ffoobang"
-  end
-
-  def test_should_fail_amendments_with_symbols
-    stub_request(:post, "#{rummager_url}/documents/%2Ffoobang").
-      to_return(status: 200, body: '{"result":"OK"}')
-
-    assert_raises Rummageable::InvalidDocument do
-      Rummageable.amend("/foobang", {title: "Cheese"})
-    end
-
-    assert_not_requested :any, "#{rummager_url}/documents/%2Ffoobang"
+  def test_should_post_amendments_to_a_document_by_its_link
+    new_document = { 'title' => 'Cheese', 'indexable_content' => 'Blah' }
+    stub_request(:post, link_url).with(body: new_document).to_return(status(200))
+    index = Rummageable::Index.new(rummager_url, index_name)
+    index.amend(link, { 'title' => 'Cheese', 'indexable_content' => 'Blah' })
+    assert_requested :post, link_url, body: new_document
   end
 end
