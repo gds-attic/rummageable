@@ -1,4 +1,5 @@
 require 'minitest/autorun'
+require 'mocha/setup'
 require 'webmock/minitest'
 require 'rummageable'
 
@@ -13,7 +14,7 @@ class MiniTest::Unit::TestCase
     'index-name'
   end
 
-  def search_url(index = index_name)
+  def documents_url(index = index_name)
     "#{rummager_url}/#{index}/documents"
   end
 

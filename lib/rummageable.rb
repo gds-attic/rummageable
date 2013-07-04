@@ -9,7 +9,8 @@ require 'rummageable/fake'
 
 module Rummageable
 
-  InvalidDocument = Class.new(RuntimeError)
+  class InvalidDocument < RuntimeError; end
+
   CHUNK_SIZE = 20
 
   attr_writer :rummager_service_name

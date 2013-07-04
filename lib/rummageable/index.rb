@@ -4,7 +4,8 @@ class Rummageable::Index
     @name = name
     @logger = options[:logger] || NullLogger.instance
     @batch_size = options.fetch(:batch_size, 20)
-    @retries = options.fetch(:retries, 3)
+    @timeout = options.fetch(:timeout, 2)
+    @attempts = options.fetch(:attempts, 3)
   end
 
   def add(entry)
@@ -35,14 +36,14 @@ class Rummageable::Index
     end
 
     def repeatedly(&block)
-      (1..@retries).each do |i|
+      @attempts.times do |i|
         begin
           return yield
         rescue RestClient::RequestFailed => e
           @logger.warn e
-          raise if i == @retries
-          @logger.info "Retrying... attempt #{i}"
-          @kernel.sleep(5 * i)
+          raise if (this_attempt = i + 1) == @attempts
+          @logger.info 'Retrying...'
+          sleep(@timeout) if @timeout
         end
       end
     end
