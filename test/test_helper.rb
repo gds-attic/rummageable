@@ -14,8 +14,17 @@ class MiniTest::Unit::TestCase
     'index-name'
   end
 
-  def documents_url(index = index_name)
-    "#{rummager_url}/#{index}/documents"
+  def documents_url(options = {})
+    parts = rummager_url, options.fetch(:index, index_name), 'documents'
+    parts << CGI.escape(options[:link]) if options[:link]
+    parts.join('/')
+  end
+
+  def status(http_code)
+    {
+      200 => { status: 200, body: '{"result":"OK"}' },
+      502 => { status: 502, body: 'Bad gateway' }
+    }.fetch(http_code)
   end
 
   def with_whitehall_rummager_service

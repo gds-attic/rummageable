@@ -1,44 +1,56 @@
 require 'test_helper'
 
 class DeleteTest < MiniTest::Unit::TestCase
+  def link
+    'http://example.com/foo'
+  end
+
+  def link_url
+    documents_url(link: link)
+  end
+
+  def stub_successful_delete_request
+    stub_request(:delete, link_url).to_return(status(200))
+  end
+
+  def stub_one_failed_delete_request
+    stub_request(:delete, link_url).
+      to_return(status(502)).times(1).then.to_return(status(200))
+  end
+
   def test_should_delete_a_document_by_its_link
-    link = "http://example.com/foo"
-
-    stub_request(:delete, "#{rummager_url}/documents/http:%2F%2Fexample.com%2Ffoo").
-      to_return(status: 200, body: '{"result":"OK"}')
-
-    Rummageable.delete(link)
+    stub_successful_delete_request
+    index = Rummageable::Index.new(rummager_url, index_name)
+    index.delete(link)
+    assert_requested :delete, link_url do |request|
+      request.headers['Content-Type'] == 'application/json' &&
+        request.headers['Accept'] == 'application/json'
+    end
   end
 
-  def test_should_allow_deletion_from_an_alternative_index
-    link = "http://example.com/foo"
-
-    stub_request(:delete, "#{rummager_url}/alternative/documents/http:%2F%2Fexample.com%2Ffoo").
-      to_return(status: 200, body: '{"result":"OK"}')
-
-    Rummageable.delete(link, '/alternative')
+  def test_should_be_able_to_delete_all_documents
+    stub_request(:delete, /#{documents_url}/).to_return(status(200))
+    index = Rummageable::Index.new(rummager_url, index_name)
+    index.delete_all
+    assert_requested :delete, documents_url, query: { delete_all: 1 } do |request|
+      request.headers['Content-Type'] == 'application/json' &&
+        request.headers['Accept'] == 'application/json'
+    end
   end
 
-  def test_should_allow_delete_all
-    stub_request(:delete, "#{rummager_url}/documents?delete_all=1").
-      to_return(status: 200, body: '{"result":"OK"}')
-
-    Rummageable.delete_all
+  def test_delete_should_handle_connection_errors
+    stub_one_failed_delete_request
+    Rummageable::Index.any_instance.expects(:sleep).once
+    index = Rummageable::Index.new(rummager_url, index_name)
+    index.delete(link)
+    assert_requested :delete, link_url, times: 2
   end
 
-  def test_should_allow_delete_all_from_an_alternative_index
-    stub_request(:delete, "#{rummager_url}/alternative/documents?delete_all=1").
-      to_return(status: 200, body: '{"result":"OK"}')
-
-    Rummageable.delete_all('/alternative')
-  end
-
-  def test_should_delete_to_rummageable_host_determined_by_rummager_service_name
-    link = "http://example.com/foo"
-    stub_request(:delete, "#{rummager_url}/documents/http:%2F%2Fexample.com%2Ffoo")
-    stub_request(:delete, "#{Plek.current.find("whitehall-search")}/documents/http:%2F%2Fexample.com%2Ffoo")
-    with_whitehall_rummager_service { Rummageable.delete(link) }
-    assert_not_requested(:delete, "#{rummager_url}/documents/http:%2F%2Fexample.com%2Ffoo")
-    assert_requested(:delete, "#{Plek.current.find("whitehall-search")}/documents/http:%2F%2Fexample.com%2Ffoo")
+  def test_delete_should_log_attempts_to_delete_documents_from_rummager
+    stub_successful_delete_request
+    logger = stub('logger')
+    logger.expects(:info).twice
+    index = Rummageable::Index.new(rummager_url, index_name, logger: logger)
+    index.delete(link)
   end
 end

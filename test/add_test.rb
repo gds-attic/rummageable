@@ -20,13 +20,6 @@ class AddTest < MiniTest::Unit::TestCase
     MultiJson.encode(documents)
   end
 
-  def status(http_code)
-    {
-      200 => { status: 200, body: '{"result":"OK"}' },
-      502 => { status: 502, body: 'Bad gateway' }
-    }.fetch(http_code)
-  end
-
   def stub_successful_request
     stub_request(:post, documents_url).to_return(status(200))
   end
@@ -102,7 +95,7 @@ class AddTest < MiniTest::Unit::TestCase
   def test_add_should_log_attempts_to_post_to_rummager
     stub_successful_request
     logger = stub('logger', debug: true)
-    logger.expects(:info).once
+    logger.expects(:info).twice
     index = Rummageable::Index.new(rummager_url, index_name, logger: logger)
     index.add(one_document)
   end
