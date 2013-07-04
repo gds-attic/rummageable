@@ -1,8 +1,10 @@
 require 'rest_client'
 require 'multi_json'
+require 'null_logger'
 require 'plek'
 
 require 'rummageable/implementation'
+require 'rummageable/index'
 require 'rummageable/fake'
 
 module Rummageable

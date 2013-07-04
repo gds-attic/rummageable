@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
   s.summary = "Mediator for apps that want their content to be in the search index"
   s.test_files = Dir["test/**/*_test.rb"]
   s.add_dependency "multi_json"
+  s.add_dependency "null_logger"
   s.add_dependency "rest-client"
   s.add_dependency "plek", '>= 0.5.0'
   s.add_development_dependency "rake"
