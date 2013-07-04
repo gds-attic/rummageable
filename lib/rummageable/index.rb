@@ -2,8 +2,7 @@ require 'json'
 
 class Rummageable::Index
   def initialize(url, name, options = {})
-    @rummager_url = url
-    @name = name
+    @index_url = [url, name.sub(%r{^/}, '')].join('/')
     @logger = options[:logger] || NullLogger.instance
     @batch_size = options.fetch(:batch_size, 20)
     @timeout = options.fetch(:timeout, 2)
@@ -34,6 +33,12 @@ class Rummageable::Index
     end
   end
 
+  def commit
+    repeatedly do
+      make_request(:post, [@index_url, 'commit'].join('/'), MultiJson.encode({}))
+    end
+  end
+
   private
     def repeatedly(&block)
       @attempts.times do |i|
@@ -49,13 +54,13 @@ class Rummageable::Index
     end
 
     def log_request(method, url, payload = nil)
-      @logger.info("#{method.upcase} to #{url}")
+      @logger.info("Request: #{method.upcase} #{url}")
     end
 
     def log_response(method, url, call_time, response)
       time = sprintf('%.03f', call_time)
       status = JSON.parse(response).fetch('status', 'UNKNOWN')
-      @logger.info("#{method.upcase} #{url} - time: #{time}s, status: #{status}")
+      @logger.info("Response: #{method.upcase} #{url} - time: #{time}s, status: #{status}")
     end
 
     def make_request(method, *args)
@@ -69,7 +74,7 @@ class Rummageable::Index
     end
 
     def documents_url(options = {})
-      parts = [@rummager_url, @name, 'documents']
+      parts = [@index_url, 'documents']
       parts << CGI.escape(options[:link]) if options[:link]
       parts.join('/')
     end

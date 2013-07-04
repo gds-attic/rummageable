@@ -6,6 +6,10 @@ require 'rummageable'
 ENV['RACK_ENV'] = 'test'
 
 class MiniTest::Unit::TestCase
+  def json_for(documents)
+    MultiJson.encode(documents)
+  end
+
   def rummager_url
     Plek.current.find('search')
   end

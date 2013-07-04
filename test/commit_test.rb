@@ -1,17 +1,14 @@
 require 'test_helper'
 
 class CommitTest < MiniTest::Unit::TestCase
-  def test_should_commit_to_rummmageable_host
-    stub_request(:post, "#{rummager_url}/commit").
-      to_return(status: 200, body: '{"result":"OK"}')
-
-    Rummageable.commit
+  def commit_url
+    [rummager_url, index_name, 'commit'].join('/')
   end
 
-  def test_should_allow_committing_an_alternative_index
-    stub_request(:post, "#{rummager_url}/alternative/commit").
-      to_return(status: 200, body: '{"result":"OK"}')
-
-    Rummageable.commit '/alternative'
+  def test_commit_should_post_to_rummager
+    stub_request(:post, commit_url).to_return(status(200))
+    index = Rummageable::Index.new(rummager_url, index_name)
+    index.commit
+    assert_requested :post, commit_url, body: json_for({})
   end
 end

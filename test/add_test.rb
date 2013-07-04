@@ -16,10 +16,6 @@ class AddTest < MiniTest::Unit::TestCase
     [one_document] << build_document(2)
   end
 
-  def json_for(documents)
-    MultiJson.encode(documents)
-  end
-
   def stub_successful_request
     stub_request(:post, documents_url).to_return(status(200))
   end
