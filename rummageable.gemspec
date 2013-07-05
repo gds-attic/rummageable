@@ -16,7 +16,6 @@ Gem::Specification.new do |s|
   s.add_dependency "multi_json"
   s.add_dependency "null_logger"
   s.add_dependency "rest-client"
-  s.add_dependency "plek", '>= 0.5.0'
   s.add_development_dependency "gem_publisher", "1.0.0"
   s.add_development_dependency "mocha"
   s.add_development_dependency "rake"

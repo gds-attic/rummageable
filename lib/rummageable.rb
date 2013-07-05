@@ -1,10 +1,10 @@
 require 'benchmark'
 require 'json'
 
-require 'rest_client'
 require 'multi_json'
 require 'null_logger'
-require 'plek'
+require 'rest_client'
+
 
 module Rummageable
   class Index

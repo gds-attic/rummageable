@@ -11,7 +11,7 @@ class MiniTest::Unit::TestCase
   end
 
   def rummager_url
-    Plek.current.find('search')
+    'http://search.dev.gov.uk'
   end
 
   def index_name
