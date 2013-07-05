@@ -34,12 +34,4 @@ class MiniTest::Unit::TestCase
       502 => { status: 502, body: 'Bad gateway' }
     }.fetch(http_code)
   end
-
-  def with_whitehall_rummager_service
-    original_rummager_service_name = Rummageable.rummager_service_name
-    Rummageable.rummager_service_name = 'whitehall-search'
-    yield
-  ensure
-    Rummageable.rummager_service_name = original_rummager_service_name
-  end
 end

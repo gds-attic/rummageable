@@ -65,15 +65,15 @@ class AddTest < MiniTest::Unit::TestCase
   def test_add_should_sleep_and_retry_on_bad_gateway_errors
     stub_one_failed_request
     Rummageable::Index.any_instance.expects(:sleep).with(1)
-    index = Rummageable::Index.new(rummager_url, index_name, timeout: 1)
+    index = Rummageable::Index.new(rummager_url, index_name, retry_delay: 1)
     assert index.add(one_document), 'should return true on success'
     assert_requested :post, documents_url, times: 2
   end
 
-  def test_add_should_not_sleep_between_attempts_if_timeout_nil
+  def test_add_should_not_sleep_between_attempts_if_retry_delay_nil
     stub_one_failed_request
     Rummageable::Index.any_instance.expects(:sleep).never
-    index = Rummageable::Index.new(rummager_url, index_name, timeout: nil)
+    index = Rummageable::Index.new(rummager_url, index_name, retry_delay: nil)
     index.add(one_document)
     assert_requested :post, documents_url, times: 2
   end
