@@ -69,13 +69,13 @@ module Rummageable
     end
 
     def log_request(method, url, payload = nil)
-      @logger.info("Request: #{method.upcase} #{url}")
+      @logger.info("Rummageable request: #{method.upcase} #{url}")
     end
 
     def log_response(method, url, call_time, response)
       time = sprintf('%.03f', call_time)
-      status = JSON.parse(response).fetch('status', 'UNKNOWN')
-      @logger.info("Response: #{method.upcase} #{url} - time: #{time}s, status: #{status}")
+      result = JSON.parse(response).fetch('result', 'UNKNOWN')
+      @logger.info("Rummageable response: #{method.upcase} #{url} - time: #{time}s, result: #{result}")
     end
 
     def make_request(method, *args)
