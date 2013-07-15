@@ -1,74 +1,97 @@
-require "rest_client"
-require 'multi_json'
-require "plek"
+require 'benchmark'
+require 'json'
 
-require "rummageable/implementation"
-require "rummageable/fake"
+require 'multi_json'
+require 'null_logger'
+require 'rest_client'
+
 
 module Rummageable
+  class Index
+    def initialize(base_url, index_name, options = {})
+      @index_url = [base_url, index_name.sub(%r{^/}, '')].join('/')
+      @logger = options[:logger] || NullLogger.instance
+      @batch_size = options.fetch(:batch_size, 20)
+      @retry_delay = options.fetch(:retry_delay, 2)
+      @attempts = options.fetch(:attempts, 3)
+    end
 
-  InvalidDocument = Class.new(RuntimeError)
-  CHUNK_SIZE = 20
+    def add(entry)
+      repeatedly do
+        make_request(:post, documents_url, MultiJson.encode([entry]))
+      end
+    end
 
-  attr_writer :rummager_service_name
-  def rummager_service_name
-    @rummager_service_name || "search"
+    def add_batch(entries)
+      entries.each_slice(@batch_size) do |batch|
+        repeatedly do
+          make_request(:post, documents_url, MultiJson.encode(batch))
+        end
+      end
+    end
+
+    def amend(link, changes)
+      repeatedly do
+        make_request(:post, documents_url(link: link), changes)
+      end
+    end
+
+    def delete(link)
+      repeatedly do
+        make_request(:delete, documents_url(link: link))
+      end
+    end
+
+    def delete_all
+      repeatedly do
+        make_request(:delete, documents_url + '?delete_all=1')
+      end
+    end
+
+    def commit
+      repeatedly do
+        make_request(:post, [@index_url, 'commit'].join('/'), MultiJson.encode({}))
+      end
+    end
+
+    private
+    def repeatedly(&block)
+      @attempts.times do |i|
+        begin
+          return yield
+        rescue RestClient::RequestFailed, RestClient::RequestTimeout, RestClient::ServerBrokeConnection => e
+          @logger.warn e.message
+          raise if @attempts == i + 1
+          @logger.info 'Retrying...'
+          sleep(@retry_delay) if @retry_delay
+        end
+      end
+    end
+
+    def log_request(method, url, payload = nil)
+      @logger.info("Rummageable request: #{method.upcase} #{url}")
+    end
+
+    def log_response(method, url, call_time, response)
+      time = sprintf('%.03f', call_time)
+      result = JSON.parse(response).fetch('result', 'UNKNOWN')
+      @logger.info("Rummageable response: #{method.upcase} #{url} - time: #{time}s, result: #{result}")
+    end
+
+    def make_request(method, *args)
+      response = nil
+      log_request(method, *args)
+      call_time = Benchmark.realtime do
+        response = RestClient.send(method, *args, content_type: :json, accept: :json)
+      end
+      log_response(method, args.first, call_time, response)
+      response
+    end
+
+    def documents_url(options = {})
+      parts = [@index_url, 'documents']
+      parts << CGI.escape(options[:link]) if options[:link]
+      parts.join('/')
+    end
   end
-
-  attr_writer :rummager_host
-  def rummager_host
-    @rummager_host || Plek.current.find(rummager_service_name)
-  end
-
-  attr_writer :default_index
-  def default_index
-    @default_index || ""
-  end
-
-  attr_writer :implementation
-  def implementation
-    @implementation ||= Implementation.new
-  end
-
-  # documents must be either a hash (for one document) or an array of hashes
-  # (for multiple documents)
-  #
-  def index(documents, index_name = default_index)
-    implementation.index(documents, index_name)
-  end
-
-  def delete(link, index_name = default_index)
-    implementation.delete(link, index_name)
-  end
-
-  def delete_all(index_name = default_index)
-    implementation.delete_all(index_name)
-  end
-
-  def amend(link, amendments, index_name = default_index)
-    implementation.amend(link, amendments, index_name)
-  end
-
-  def commit(index_name = default_index)
-    implementation.commit(index_name)
-  end
-
-  VALID_KEYS = [
-    %w[title],
-    %w[description],
-    %w[format],
-    %w[section],
-    %w[subsection],
-    %w[subsubsection],
-    %w[link],
-    %w[indexable_content],
-    %w[boost_phrases],
-    %w[link_order],
-  ]
-
-  def validate_structure(hash, parents=[])
-    implementation.validate_structure(hash, parents)
-  end
-
-  extend self
 end
