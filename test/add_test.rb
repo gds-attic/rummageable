@@ -104,4 +104,15 @@ class AddTest < MiniTest::Unit::TestCase
     index = Rummageable::Index.new(rummager_url, index_name, logger: logger)
     index.add(one_document)
   end
+
+  def test_should_return_unknown_status_for_blank_response
+    RestClient.expects(:send).returns("")
+    Rummageable::Index.any_instance.stubs(:sleep)
+
+    logger = stub('logger', debug: true, info: true)
+    logger.expects(:info).once.with(regexp_matches(/result: UNKNOWN/))
+
+    index = Rummageable::Index.new(rummager_url, index_name, logger: logger)
+    index.add(one_document)
+  end
 end

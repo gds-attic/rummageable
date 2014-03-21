@@ -74,7 +74,7 @@ module Rummageable
 
     def log_response(method, url, call_time, response)
       time = sprintf('%.03f', call_time)
-      result = JSON.parse(response).fetch('result', 'UNKNOWN')
+      result = response.length > 0 ? JSON.parse(response).fetch('result', 'UNKNOWN') : "UNKNOWN"
       @logger.info("Rummageable response: #{method.upcase} #{url} - time: #{time}s, result: #{result}")
     end
 
