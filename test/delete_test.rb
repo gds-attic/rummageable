@@ -6,11 +6,11 @@ class DeleteTest < MiniTest::Unit::TestCase
   end
 
   def stub_successful_delete_request
-    stub_request(:delete, link_url).to_return(status(200))
+    stub_request(:delete, documents_url(id: link, type: 'edition')).to_return(status(200))
   end
 
   def stub_one_failed_delete_request
-    stub_request(:delete, link_url).
+    stub_request(:delete, documents_url(id: link, type: 'edition')).
       to_return(status(502)).times(1).then.to_return(status(200))
   end
 
@@ -18,7 +18,19 @@ class DeleteTest < MiniTest::Unit::TestCase
     stub_successful_delete_request
     index = Rummageable::Index.new(rummager_url, index_name)
     index.delete(link)
-    assert_requested :delete, link_url do |request|
+    assert_requested :delete, documents_url(id: link, type: 'edition') do |request|
+      request.headers['Content-Type'] == 'application/json' &&
+        request.headers['Accept'] == 'application/json'
+    end
+  end
+
+  def test_should_delete_a_document_by_its_type_and_id
+    stub_request(:delete, documents_url(id: 'jobs-exact', type: 'best_bet')).to_return(status(200))
+
+    index = Rummageable::Index.new(rummager_url, index_name)
+    index.delete('jobs-exact', 'best_bet')
+
+    assert_requested :delete, documents_url(id: 'jobs-exact', type: 'best_bet') do |request|
       request.headers['Content-Type'] == 'application/json' &&
         request.headers['Accept'] == 'application/json'
     end
@@ -39,7 +51,7 @@ class DeleteTest < MiniTest::Unit::TestCase
     Rummageable::Index.any_instance.expects(:sleep).once
     index = Rummageable::Index.new(rummager_url, index_name)
     index.delete(link)
-    assert_requested :delete, link_url, times: 2
+    assert_requested :delete, documents_url(id: link, type: 'edition'), times: 2
   end
 
   def test_delete_should_log_attempts_to_delete_documents_from_rummager

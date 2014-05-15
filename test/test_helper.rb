@@ -20,8 +20,11 @@ class MiniTest::Unit::TestCase
   end
 
   def documents_url(options = {})
+    options[:id] ||= options[:link]
+
     parts = rummager_url, options.fetch(:index, index_name), 'documents'
-    parts << CGI.escape(options[:link]) if options[:link]
+    parts << CGI.escape(options[:type]) if options[:type]
+    parts << CGI.escape(options[:id]) if options[:id]
     parts.join('/')
   end
 
