@@ -2,6 +2,7 @@ require 'minitest/autorun'
 require 'mocha/setup'
 require 'webmock/minitest'
 require 'rummageable'
+require 'debugger'
 
 ENV['RACK_ENV'] = 'test'
 
