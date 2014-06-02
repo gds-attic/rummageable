@@ -36,9 +36,9 @@ module Rummageable
       end
     end
 
-    def delete(link)
+    def delete(id, type = 'edition')
       repeatedly do
-        make_request(:delete, documents_url(link: link))
+        make_request(:delete, documents_url(id: id, type: type))
       end
     end
 
@@ -89,8 +89,11 @@ module Rummageable
     end
 
     def documents_url(options = {})
+      options[:id] ||= options[:link]
+
       parts = [@index_url, 'documents']
-      parts << CGI.escape(options[:link]) if options[:link]
+      parts << CGI.escape(options[:type]) if options[:type]
+      parts << CGI.escape(options[:id]) if options[:id]
       parts.join('/')
     end
   end
