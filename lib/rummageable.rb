@@ -36,7 +36,8 @@ module Rummageable
       end
     end
 
-    def delete(id, type = 'edition')
+    def delete(id, options = {})
+      type = options[:type] || 'edition'
       repeatedly do
         make_request(:delete, documents_url(id: id, type: type))
       end
