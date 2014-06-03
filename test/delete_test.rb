@@ -28,7 +28,7 @@ class DeleteTest < MiniTest::Unit::TestCase
     stub_request(:delete, documents_url(id: 'jobs-exact', type: 'best_bet')).to_return(status(200))
 
     index = Rummageable::Index.new(rummager_url, index_name)
-    index.delete('jobs-exact', 'best_bet')
+    index.delete('jobs-exact', type: 'best_bet')
 
     assert_requested :delete, documents_url(id: 'jobs-exact', type: 'best_bet') do |request|
       request.headers['Content-Type'] == 'application/json' &&
