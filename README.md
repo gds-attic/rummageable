@@ -1,4 +1,6 @@
-# Rummageable
+# Rummageable (DEPRECATED)
+
+**This gem is deprecated. Please use [gds-api-adapters](http://www.rubydoc.info/github/alphagov/gds-api-adapters/master/GdsApi/Rummager).**
 
 Rummageable is a ruby gem to simplify communication with Rummager to
 create/update/remove items in the gov.uk search index.
