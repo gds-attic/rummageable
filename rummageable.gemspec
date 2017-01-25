@@ -6,13 +6,13 @@ require 'rummageable/version'
 Gem::Specification.new do |s|
   s.name = "rummageable"
   s.version = Rummageable::VERSION
-  s.authors = ["GovUK Beta Team"]
-  s.description = "Mediator for apps that want their content to be in the search index"
+  s.authors = ["Government Digital Service"]
+  s.description = "DEPRECATED - Mediator for apps that want their content to be in the search index"
   s.files = Dir["lib/**/*.rb"]
   s.homepage = "https://github.com/alphagov/rummageable"
   s.license = 'MIT'
   s.require_paths = ["lib"]
-  s.summary = "Mediator for apps that want their content to be in the search index"
+  s.summary = "DEPRECATED - Mediator for apps that want their content to be in the search index"
   s.test_files = Dir["test/**/*_test.rb"]
   s.add_dependency "multi_json"
   s.add_dependency "null_logger"
